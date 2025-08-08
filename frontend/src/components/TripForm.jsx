@@ -4,7 +4,6 @@ import { MapPin } from 'lucide-react';
 
 const TripForm = ({ tripDetails, setTripDetails, onSubmit, loading }) => {
 
-  // Map-based picking removed per request
 
   // OpenCage Geocoding API for location search
   const searchLocations = async (inputValue) => {
@@ -13,7 +12,7 @@ const TripForm = ({ tripDetails, setTripDetails, onSubmit, loading }) => {
     }
 
     try {
-      // Using OpenCage Geocoding API with better parameters
+   
       const response = await fetch(
         `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(inputValue)}&countrycode=us&limit=15&no_annotations=1&language=en`
       );
@@ -118,8 +117,7 @@ const TripForm = ({ tripDetails, setTripDetails, onSubmit, loading }) => {
     })
   };
 
-  // Map-based picking removed per request
-
+  
   const LocationSelect = ({ label, fieldName, placeholder }) => {
     const currentValue = useMemo(() => {
       const value = tripDetails[fieldName];
@@ -158,8 +156,8 @@ const TripForm = ({ tripDetails, setTripDetails, onSubmit, loading }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-xl border border-cyan-100 p-8 w-full">
-      <h2 className="text-3xl font-bold text-teal-800 mb-8 text-center">Trip Details</h2>
+    <div className="bg-white rounded-xl shadow-xl border border-cyan-100 p-4 sm:p-6 lg:p-8 w-full">
+      <h2 className="text-2xl sm:text-3xl font-bold text-teal-800 mb-6 sm:mb-8 text-center">Trip Details</h2>
       
       <form onSubmit={onSubmit} className="space-y-8">
         {/* Trip Information */}
@@ -225,7 +223,6 @@ const TripForm = ({ tripDetails, setTripDetails, onSubmit, loading }) => {
         </button>
       </form>
 
-      {/* Map picker removed */}
     </div>
   );
 };

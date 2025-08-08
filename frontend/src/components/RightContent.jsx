@@ -4,7 +4,7 @@ import EmptyState from './EmptyState';
 
 const RightContent = ({ routeData, downloading, setDownloading }) => {
   return (
-    <div className="xl:col-span-2 space-y-8">
+    <div className="lg:col-span-2 space-y-6 lg:space-y-8">
       {routeData ? (
         <ResultsSection 
           routeData={routeData}

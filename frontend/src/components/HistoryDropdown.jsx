@@ -84,9 +84,13 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
     });
   };
 
-  const truncateLocation = (location, maxLength = 25) => {
-    if (location.length <= maxLength) return location;
-    return location.substring(0, maxLength) + '...';
+  const truncateLocation = (location, maxLength = 25, mobileMaxLength = 15) => {
+    // Use different truncation lengths for mobile vs desktop
+    const isMobile = window.innerWidth < 640; // sm breakpoint
+    const currentMaxLength = isMobile ? mobileMaxLength : maxLength;
+    
+    if (location.length <= currentMaxLength) return location;
+    return location.substring(0, currentMaxLength) + '...';
   };
 
   useEffect(() => {
@@ -99,24 +103,25 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 bg-white text-teal-700 px-4 py-2 rounded-lg border border-teal-200 hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors shadow-sm"
+        className="flex items-center gap-1 sm:gap-2 bg-white text-teal-700 px-2 sm:px-4 py-2 rounded-lg border border-teal-200 hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors shadow-sm"
       >
-        <Clock className="w-5 h-5" />
-        <span className="font-medium">History</span>
+        <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span className="font-medium text-sm sm:text-base">History</span>
         {isOpen ? (
-          <ChevronUp className="w-4 h-4" />
+          <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
         ) : (
-          <ChevronDown className="w-4 h-4" />
+          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800">Trip History</h3>
-                <p className="text-sm text-gray-600">Click on any trip to reload it</p>
+        <div className="absolute right-0 md:right-0 left-0 md:left-auto top-full mt-2 w-full sm:w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-80 sm:max-h-96 overflow-y-auto">
+          <div className="p-3 sm:p-4 border-b border-gray-200">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800">Trip History</h3>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Click on any trip to reload it</p>
+                <p className="text-xs text-gray-600 sm:hidden">Tap to reload</p>
               </div>
               {history.length > 0 && (
                 <button
@@ -136,10 +141,11 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                       alert('Failed to delete all trips. Please try again.');
                     }
                   }}
-                  className="ml-3 text-red-600 hover:text-red-700 text-sm font-medium border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded"
+                  className="ml-2 text-red-600 hover:text-red-700 text-xs sm:text-sm font-medium border border-red-200 hover:bg-red-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded flex-shrink-0"
                   title="Delete all history"
                 >
-                  Delete all
+                  <span className="hidden sm:inline">Delete all</span>
+                  <span className="sm:hidden">Clear</span>
                 </button>
               )}
             </div>
@@ -174,22 +180,25 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                   >
                     <button
                       onClick={() => handleHistoryClick(entry.id)}
-                      className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-200 pr-12"
+                      className="w-full text-left p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-200 pr-8 sm:pr-12"
                     >
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-800 mb-1">
+                      <div className="flex justify-between items-start mb-1 sm:mb-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-800 mb-1 text-sm sm:text-base truncate">
                             {truncateLocation(entry.start_location)} → {truncateLocation(entry.pickup_location)} → {truncateLocation(entry.dropoff_location)}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-xs sm:text-sm text-gray-600">
                             Cycle hours: {entry.cycle_hours_used}h
                           </div>
                         </div>
-                        <div className="text-xs text-gray-500 ml-2">
+                        <div className="text-xs text-gray-500 ml-2 flex-shrink-0">
                           {formatDate(entry.created_at)}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 truncate sm:hidden">
+                        {truncateLocation(entry.start_location, 20, 12)} → {truncateLocation(entry.pickup_location, 20, 12)} → {truncateLocation(entry.dropoff_location, 20, 12)}
+                      </div>
+                      <div className="text-xs text-gray-500 hidden sm:block">
                         {entry.start_location} → {entry.pickup_location} → {entry.dropoff_location}
                       </div>
                     </button>
@@ -197,10 +206,10 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                     {/* Delete Button */}
                     <button
                       onClick={(e) => deleteHistory(entry.id, e)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                      className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 opacity-60 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
                       title="Delete this trip from history"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 ))}
@@ -209,9 +218,10 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
           </div>
 
           {history.length > 0 && (
-            <div className="p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+            <div className="p-2 sm:p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
               <div className="text-xs text-gray-500 text-center">
-                Showing last {history.length} trips • Click to reload any trip • Hover to delete
+                <span className="hidden sm:inline">Showing last {history.length} trips • Click to reload any trip • Hover to delete</span>
+                <span className="sm:hidden">{history.length} trips • Tap to reload • Tap trash to delete</span>
               </div>
             </div>
           )}
