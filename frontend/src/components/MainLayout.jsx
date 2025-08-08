@@ -26,7 +26,7 @@ const MainLayout = ({
           setIsOpen={setIsOpen}
         />
 
-        {/* Main Content - Better responsive grid */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           <LeftSidebar 
             tripDetails={tripDetails}

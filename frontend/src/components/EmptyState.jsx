@@ -10,7 +10,7 @@ const EmptyState = () => {
           </svg>
         </div>
         <h3 className="text-lg font-medium text-teal-800 mb-2">Ready to Calculate Route</h3>
-        <p className="text-cyan-600">Fill out the form on the left to generate your driver logs</p>
+        <p className="text-cyan-600">Fill out the form to generate your driver logs</p>
       </div>
     </div>
   );
