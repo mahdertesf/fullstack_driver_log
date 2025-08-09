@@ -52,7 +52,6 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
       return;
     }
 
-    // Optimistic update: remove immediately
     const previousHistory = history;
     setHistory(prev => prev.filter(entry => entry.id !== historyId));
 
@@ -65,10 +64,8 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || 'Failed to delete trip');
       }
-      // Success: no further action needed; item already removed
     } catch (err) {
       console.error('Error deleting history:', err);
-      // Rollback UI on failure
       setHistory(previousHistory);
       alert('Failed to delete trip. Please try again.');
     }
@@ -85,8 +82,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
   };
 
   const truncateLocation = (location, maxLength = 25, mobileMaxLength = 15) => {
-    // Use different truncation lengths for mobile vs desktop
-    const isMobile = window.innerWidth < 640; // sm breakpoint
+    const isMobile = window.innerWidth < 640;
     const currentMaxLength = isMobile ? mobileMaxLength : maxLength;
     
     if (location.length <= currentMaxLength) return location;
@@ -100,7 +96,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
   }, [isOpen]);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 sm:gap-2 bg-white text-teal-700 px-2 sm:px-4 py-2 rounded-lg border border-teal-200 hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors shadow-sm"
@@ -115,7 +111,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 md:right-0 left-0 md:left-auto top-full mt-2 w-full sm:w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-80 sm:max-h-96 overflow-y-auto">
+        <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 sm:w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-[1000] max-h-40 sm:max-h-48 overflow-y-auto">
           <div className="p-3 sm:p-4 border-b border-gray-200">
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -128,7 +124,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                   onClick={async () => {
                     if (!window.confirm('Are you sure you want to delete ALL trips from history? This cannot be undone.')) return;
                     const prev = history;
-                    setHistory([]); // optimistic clear
+                    setHistory([]);
                     try {
                       const resp = await fetch(`${API_BASE_URL}/history/`, { method: 'DELETE' });
                       if (!resp.ok) {
@@ -137,7 +133,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                       }
                     } catch (err) {
                       console.error('Error deleting all history:', err);
-                      setHistory(prev); // rollback
+                      setHistory(prev);
                       alert('Failed to delete all trips. Please try again.');
                     }
                   }}
@@ -151,7 +147,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
             </div>
           </div>
 
-          <div className="p-2">
+          <div className="p-2 ">
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600"></div>
@@ -172,7 +168,7 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                 No trip history found. Calculate your first route to see it here.
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1 ">
                 {history.map((entry) => (
                   <div
                     key={entry.id}
@@ -203,7 +199,6 @@ const HistoryDropdown = ({ onHistorySelect, isOpen, setIsOpen }) => {
                       </div>
                     </button>
                     
-                    {/* Delete Button */}
                     <button
                       onClick={(e) => deleteHistory(entry.id, e)}
                       className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 opacity-60 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
