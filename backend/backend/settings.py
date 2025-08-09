@@ -76,7 +76,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 default_cors = ['http://localhost:5173']
 cors_env = [o.strip() for o in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
-CORS_ALLOWED_ORIGINS = cors_env or default_cors
+CORS_ALLOWED_ORIGINS = [
+    "https://fullstack-driver-log.vercel.app",
+    "http://localhost:5173",  
+]
 
 csrf_env = [o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()]
 CSRF_TRUSTED_ORIGINS = csrf_env
